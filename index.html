@@ -5,88 +5,148 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-Aduan Kerosakan Alat Geomatik PUO</title>
     <style>
-        :root { --primary: #2980b9; --bg: #f5f6fa; }
+        :root { 
+            --primary: #2980b9; 
+            --secondary: #3498db;
+            --bg: #f5f6fa; 
+            --text: #2c3e50;
+        }
 
-        /* Bahagian Latar Belakang */
+        /* Latar Belakang Penuh */
         body { 
-            font-family: 'Segoe UI', sans-serif; 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
             margin: 0; 
-            padding: 20px;
+            padding: 40px 20px;
             background-image: url('backgroundpuo.jpeg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
             background-color: var(--bg);
+            color: var(--text);
         }
 
-        /* Container transparan moden */
+        /* Kontena Borang (Efek Glassmorphism) */
         .container { 
-            max-width: 600px; 
+            max-width: 650px; 
             margin: auto; 
-            background: rgba(255, 255, 255, 0.95); 
-            padding: 30px; 
-            border-radius: 15px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            background: rgba(255, 255, 255, 0.92); 
+            padding: 40px; 
+            border-radius: 24px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); 
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* Susunan Header dengan Logo */
+        /* Header & Logo */
         .header-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-            gap: 15px;
+            margin-bottom: 30px;
+            gap: 20px;
+            border-bottom: 2px solid rgba(41, 128, 185, 0.1);
+            padding-bottom: 20px;
         }
 
         .header-container img {
-            width: 60px; /* Saiz logo */
+            width: 70px;
             height: auto;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
         }
 
         .header-container h2 { 
             margin: 0;
             color: var(--primary); 
-            text-align: left;
+            font-size: 1.6rem;
+            font-weight: 800;
             line-height: 1.2;
-            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; color: #34495e; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        /* Gaya Form */
+        .form-group { margin-bottom: 20px; }
         
+        label { 
+            display: block; 
+            font-weight: 600; 
+            margin-bottom: 8px; 
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        input, select, textarea { 
+            width: 100%; 
+            padding: 14px; 
+            border: 2px solid #e1e8ed; 
+            border-radius: 12px; 
+            box-sizing: border-box; 
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.15);
+            background: #fff;
+        }
+
+        /* Gambar Preview */
         #preview { 
             width: 100%; 
-            max-height: 200px; 
-            object-fit: contain; 
-            margin-top: 10px; 
+            max-height: 250px; 
+            object-fit: cover; 
+            margin-top: 15px; 
             display: none; 
-            border: 2px dashed #ddd; 
-            border-radius: 8px; 
+            border: 3px dashed var(--secondary); 
+            border-radius: 15px; 
+            transition: 0.3s;
         }
         
+        /* Butang Hantar */
         button { 
             width: 100%; 
-            padding: 15px; 
+            padding: 18px; 
             border: none; 
-            border-radius: 8px; 
-            font-size: 16px; 
-            font-weight: bold; 
+            border-radius: 12px; 
+            font-size: 1.1rem; 
+            font-weight: 700; 
             cursor: pointer; 
-            transition: 0.3s; 
-            margin-top: 10px; 
-            background: var(--primary); 
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            margin-top: 15px; 
+            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
             color: white; 
+            box-shadow: 0 8px 15px rgba(41, 128, 185, 0.2);
         }
         
-        button:hover { background: #2171a3; }
-        button:disabled { background: #bdc3c7; }
+        button:hover { 
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px rgba(41, 128, 185, 0.3);
+            filter: brightness(1.1);
+        }
+
+        button:active { transform: translateY(-1px); }
+        button:disabled { background: #bdc3c7; cursor: not-allowed; transform: none; }
         
-        #statusMsg { text-align: center; margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 5px; display: none; }
-        .success { background: #d4edda; color: #155724; }
+        /* Mesej Status */
+        #statusMsg { 
+            text-align: center; 
+            margin-top: 20px; 
+            font-weight: bold; 
+            padding: 15px; 
+            border-radius: 12px; 
+            display: none; 
+            animation: fadeIn 0.5s ease;
+        }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -101,30 +161,40 @@
         <div class="form-group">
             <label>Jenis Peralatan</label>
             <select id="toolType">
-                <option value="Total Station">Total Station</option>
-                <option value="GNSS Receiver">GNSS Receiver</option>
-                <option value="Digital Level">Digital Level</option>
-                <option value="Lain-lain">Lain-lain</option>
+                <option value="" disabled selected>Pilih Alatan...</option>
+                <optgroup label="Alat Utama">
+                    <option value="Total Station">Total Station</option>
+                    <option value="GNSS Receiver">GNSS Receiver</option>
+                    <option value="Digital Level">Digital Level</option>
+                </optgroup>
+                <optgroup label="Aksesori & Lain-lain">
+                    <option value="Tripod">Tripod</option>
+                    <option value="Prism">Prism</option>
+                    <option value="Leveling Staff">Leveling Staff</option>
+                    <option value="Pita Ukur">Pita Ukur</option>
+                    <option value="Tukul">Tukul</option>
+                    <option value="Lain-lain">Lain-lain</option>
+                </optgroup>
             </select>
         </div>
 
         <div class="form-group">
             <label>No. Siri / No. Aset</label>
-            <input type="text" id="serialNo" placeholder="Masukkan No. Siri" required>
+            <input type="text" id="serialNo" placeholder="Contoh: PUO/GEO/TS-01" required>
         </div>
 
         <div class="form-group">
             <label>Tahap Kerosakan</label>
             <select id="priority">
-                <option value="High">Kritikal</option>
-                <option value="Medium">Sederhana</option>
-                <option value="Low">Rutin</option>
+                <option value="High">Kritikal (Tidak Boleh Diguna)</option>
+                <option value="Medium">Sederhana (Masih Berfungsi)</option>
+                <option value="Low">Rutin (Kerosakan Kecil)</option>
             </select>
         </div>
 
         <div class="form-group">
             <label>Deskripsi Masalah</label>
-            <textarea id="desc" rows="3" placeholder="Terangkan kerosakan alat..." required></textarea>
+            <textarea id="desc" rows="4" placeholder="Sila jelaskan kerosakan secara terperinci..." required></textarea>
         </div>
 
         <div class="form-group">
@@ -135,7 +205,7 @@
 
         <div class="form-group">
             <label>Nama Pelapor</label>
-            <input type="text" id="reporter" placeholder="Nama penuh anda" required>
+            <input type="text" id="reporter" placeholder="Masukkan nama penuh anda" required>
         </div>
 
         <button type="submit" id="submitBtn">Hantar Laporan & Gambar</button>
@@ -162,12 +232,13 @@
             img.onload = function() {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                const maxWidth = 400; 
+                // Meningkatkan kualiti preview sedikit (500px)
+                const maxWidth = 500; 
                 const scale = maxWidth / img.width;
                 canvas.width = maxWidth;
                 canvas.height = img.height * scale;
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                base64String = canvas.toDataURL('image/jpeg', 0.7);
+                base64String = canvas.toDataURL('image/jpeg', 0.8);
                 preview.src = base64String;
                 preview.style.display = "block";
             }
@@ -178,7 +249,7 @@
     form.addEventListener('submit', e => {
         e.preventDefault();
         btn.disabled = true;
-        btn.innerHTML = "Sedang Menghantar...";
+        btn.innerHTML = "Memproses Laporan...";
 
         const formData = {
             alat: document.getElementById('toolType').value,
@@ -196,17 +267,21 @@
         })
         .then(() => {
             statusMsg.className = "success";
-            statusMsg.innerHTML = "Berjaya dihantar! Sila semak Google Sheets.";
+            statusMsg.innerHTML = "✅ Laporan Berjaya Dihantar ke Bengkel Geomatik!";
             statusMsg.style.display = "block";
             form.reset();
             document.getElementById('preview').style.display = "none";
             base64String = "";
             btn.disabled = false;
             btn.innerHTML = "Hantar Laporan & Gambar";
+            
+            // Skrol ke atas untuk nampak mesej berjaya
+            window.scrollTo({top: 0, behavior: 'smooth'});
         })
         .catch(error => {
-            alert("Ralat: " + error.message);
+            alert("Ralat Teknikal: " + error.message);
             btn.disabled = false;
+            btn.innerHTML = "Cuba Lagi";
         });
     });
 </script>
