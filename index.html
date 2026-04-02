@@ -3,119 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Tiket Kerosakan Alat Geomatik</title>
+    <title>Sistem Tiket Geomatik v2.0</title>
     <style>
-        :root { --primary: #e74c3c; --secondary: #2c3e50; --bg: #f4f7f6; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        :root { --primary: #2980b9; --danger: #e74c3c; --bg: #f5f6fa; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; }
         
-        /* Form Styling */
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { color: var(--secondary); margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        label { display: block; font-weight: bold; margin: 10px 0 5px; font-size: 14px; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.3s; }
-        button:hover { background: #c0392b; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #34495e; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
+        
+        button { width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-submit { background: var(--primary); color: white; }
+        .btn-submit:hover { background: #2471a3; }
+        .btn-submit:disabled { background: #bdc3c7; cursor: not-allowed; }
 
-        /* List Styling */
-        .ticket-list { max-height: 550px; overflow-y: auto; }
-        .ticket-item { background: #fff; border-left: 5px solid var(--primary); padding: 15px; margin-bottom: 10px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; }
-        .ticket-header { display: flex; justify-content: space-between; font-size: 12px; color: #7f8c8d; }
-        .priority-tag { padding: 2px 8px; border-radius: 10px; font-size: 10px; color: white; }
-        .high { background: #e74c3c; }
-        .medium { background: #f39c12; }
-        .low { background: #3498db; }
-        .status-badge { font-size: 11px; font-weight: bold; color: #27ae60; margin-top: 5px; display: block; }
+        #statusMsg { text-align: center; margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 5px; display: none; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
 
-<h1 style="text-align:center; color: #2c3e50;">Geomatic Equipment Ticketing System</h1>
-
 <div class="container">
-    <div class="card">
-        <h2>Hantar Laporan Kerosakan</h2>
-        <form id="faultForm">
+    <h2>Laporan Kerosakan Alat</h2>
+    <form id="ticketForm">
+        <div class="form-group">
             <label>Jenis Peralatan</label>
-            <select id="toolType" required>
+            <select id="toolType">
                 <option value="Total Station">Total Station</option>
                 <option value="GNSS Receiver">GNSS Receiver</option>
                 <option value="Digital Level">Digital Level</option>
-                <option value="Drone/UAV">Drone/UAV</option>
-                <option value="Aksesori (Prism/Tripod)">Aksesori (Prism/Tripod)</option>
+                <option value="Drone">Drone/UAV</option>
+                <option value="Aksesori">Aksesori (Tripod/Prism)</option>
             </select>
+        </div>
 
+        <div class="form-group">
             <label>No. Siri / No. Aset</label>
-            <input type="text" id="serialNo" placeholder="Contoh: TS-2024-001" required>
+            <input type="text" id="serialNo" placeholder="Contoh: TS-01-2024" required>
+        </div>
 
-            <label>Tahap Keutamaan</label>
+        <div class="form-group">
+            <label>Tahap Kerosakan</label>
             <select id="priority">
-                <option value="high">Kritikal (Alat tidak boleh guna langsung)</option>
-                <option value="medium">Sederhana (Ada ralat/rosak kecil)</option>
-                <option value="low">Rutin (Perlu kalibrasi/servis)</option>
+                <option value="High">Kritikal (Tidak boleh guna)</option>
+                <option value="Medium">Sederhana (Ada ralat/rosak kecil)</option>
+                <option value="Low">Rutin (Perlu servis/kalibrasi)</option>
             </select>
+        </div>
 
-            <label>Deskripsi Kerosakan</label>
-            <textarea id="desc" rows="4" placeholder="Terangkan kerosakan secara terperinci..." required></textarea>
+        <div class="form-group">
+            <label>Deskripsi Masalah</label>
+            <textarea id="desc" rows="4" placeholder="Nyatakan apa yang rosak..." required></textarea>
+        </div>
 
+        <div class="form-group">
             <label>Nama Pelapor</label>
             <input type="text" id="reporter" placeholder="Nama anda" required>
-
-            <button type="submit">Hantar Tiket Kerosakan</button>
-        </form>
-    </div>
-
-    <div class="card">
-        <h2>Senarai Tiket Aktif</h2>
-        <div id="ticketContainer" class="ticket-list">
-            <p style="color: #95a5a6; text-align: center;">Tiada laporan kerosakan setakat ini.</p>
         </div>
-    </div>
+
+        <button type="submit" id="submitBtn" class="btn-submit">Hantar Laporan ke Database</button>
+    </form>
+
+    <div id="statusMsg"></div>
 </div>
 
 <script>
-    const faultForm = document.getElementById('faultForm');
-    const ticketContainer = document.getElementById('ticketContainer');
+    // URL Web App anda yang telah di-deploy
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzmLJUHO_KKdlCOR1DsX6lZ-eVLhWcz-J0kIlb2kiMYwTPzWNJOAJU7OlEyoOG_ouX5Eg/exec';
+    const form = document.getElementById('ticketForm');
+    const btn = document.getElementById('submitBtn');
+    const statusMsg = document.getElementById('statusMsg');
 
-    faultForm.addEventListener('submit', function(e) {
+    form.addEventListener('submit', e => {
         e.preventDefault();
-
-        // Ambil Data
-        const tool = document.getElementById('toolType').value;
-        const serial = document.getElementById('serialNo').value;
-        const priority = document.getElementById('priority').value;
-        const desc = document.getElementById('desc').value;
-        const reporter = document.getElementById('reporter').value;
-        const time = new Date().toLocaleString();
-
-        // Cipta Elemen Tiket
-        const ticket = document.createElement('div');
-        ticket.className = 'ticket-item';
         
-        ticket.innerHTML = `
-            <div class="ticket-header">
-                <span>ID: #${Math.floor(Math.random() * 1000)}</span>
-                <span>${time}</span>
-            </div>
-            <strong style="font-size: 16px;">${tool} (${serial})</strong>
-            <span class="priority-tag ${priority}">${priority.toUpperCase()}</span>
-            <p style="font-size: 14px; margin: 10px 0;">${desc}</p>
-            <small>Dilapor oleh: <b>${reporter}</b></small>
-            <span class="status-badge">● STATUS: PENDING REVIEW</span>
-        `;
+        // Tukar status butang
+        btn.disabled = true;
+        btn.innerHTML = "Sedang Menghantar...";
+        statusMsg.style.display = "none";
 
-        // Masukkan ke dalam senarai (paling atas)
-        if (ticketContainer.innerHTML.includes("Tiada laporan")) {
-            ticketContainer.innerHTML = "";
-        }
-        ticketContainer.prepend(ticket);
+        // Sediakan data untuk dihantar
+        const formData = {
+            alat: document.getElementById('toolType').value,
+            serial: document.getElementById('serialNo').value,
+            priority: document.getElementById('priority').value,
+            masalah: document.getElementById('desc').value,
+            pelapor: document.getElementById('reporter').value
+        };
 
-        // Reset Borang
-        faultForm.reset();
-        alert("Laporan telah dihantar ke stor bengkel!");
+        // Hantar ke Google Apps Script menggunakan Fetch
+        fetch(scriptURL, {
+            method: 'POST',
+            mode: 'no-cors', // Penting untuk mengelakkan isu CORS dengan Google Script
+            cache: 'no-cache',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            // Paparkan mesej berjaya
+            statusMsg.className = "success";
+            statusMsg.innerHTML = "Berjaya! Laporan telah disimpan dalam Google Sheets.";
+            statusMsg.style.display = "block";
+            
+            // Reset form
+            form.reset();
+            btn.disabled = false;
+            btn.innerHTML = "Hantar Laporan ke Database";
+        })
+        .catch(error => {
+            statusMsg.className = "error";
+            statusMsg.innerHTML = "Ralat: " + error.message;
+            statusMsg.style.display = "block";
+            btn.disabled = false;
+            btn.innerHTML = "Cuba Lagi";
+        });
     });
 </script>
 
 </body>
 </html>
-
