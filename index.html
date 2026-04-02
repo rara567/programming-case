@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Tiket Geomatik v2.0</title>
+    <title>Sistem Tiket Geomatik v3.0 (Photo Upload)</title>
     <style>
         :root { --primary: #2980b9; --danger: #e74c3c; --bg: #f5f6fa; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
@@ -14,6 +14,9 @@
         label { display: block; font-weight: bold; margin-bottom: 5px; color: #34495e; }
         input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
         
+        /* Style untuk Preview Gambar */
+        #preview { width: 100%; max-height: 200px; object-fit: contain; margin-top: 10px; display: none; border: 2px dashed #ddd; border-radius: 8px; }
+
         button { width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
         .btn-submit { background: var(--primary); color: white; }
         .btn-submit:hover { background: #2471a3; }
@@ -56,7 +59,13 @@
 
         <div class="form-group">
             <label>Deskripsi Masalah</label>
-            <textarea id="desc" rows="4" placeholder="Nyatakan apa yang rosak..." required></textarea>
+            <textarea id="desc" rows="3" placeholder="Nyatakan apa yang rosak..." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Gambar Kerosakan (Pilihan)</label>
+            <input type="file" id="fileInput" accept="image/*" onchange="previewImage()">
+            <img id="preview" src="" alt="Preview Gambar">
         </div>
 
         <div class="form-group">
@@ -64,54 +73,69 @@
             <input type="text" id="reporter" placeholder="Nama anda" required>
         </div>
 
-        <button type="submit" id="submitBtn" class="btn-submit">Hantar Laporan ke Database</button>
+        <button type="submit" id="submitBtn" class="btn-submit">Hantar Laporan & Gambar</button>
     </form>
 
     <div id="statusMsg"></div>
 </div>
 
 <script>
-    // URL Web App anda yang telah di-deploy
+    // URL Web App anda
     const scriptURL = 'https://script.google.com/macros/s/AKfycbzmLJUHO_KKdlCOR1DsX6lZ-eVLhWcz-J0kIlb2kiMYwTPzWNJOAJU7OlEyoOG_ouX5Eg/exec';
     const form = document.getElementById('ticketForm');
     const btn = document.getElementById('submitBtn');
     const statusMsg = document.getElementById('statusMsg');
+    let base64String = "";
+
+    // Fungsi untuk tukar gambar ke Base64 (Teks)
+    function previewImage() {
+        const file = document.getElementById('fileInput').files[0];
+        const reader = new FileReader();
+        const preview = document.getElementById('preview');
+
+        reader.onloadend = function() {
+            base64String = reader.result;
+            preview.src = reader.result;
+            preview.style.display = "block";
+        }
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
 
     form.addEventListener('submit', e => {
         e.preventDefault();
         
-        // Tukar status butang
         btn.disabled = true;
-        btn.innerHTML = "Sedang Menghantar...";
+        btn.innerHTML = "Sedang Memproses Gambar & Data...";
         statusMsg.style.display = "none";
 
-        // Sediakan data untuk dihantar
         const formData = {
             alat: document.getElementById('toolType').value,
             serial: document.getElementById('serialNo').value,
             priority: document.getElementById('priority').value,
             masalah: document.getElementById('desc').value,
-            pelapor: document.getElementById('reporter').value
+            pelapor: document.getElementById('reporter').value,
+            gambar: base64String // Data gambar dihantar di sini
         };
 
-        // Hantar ke Google Apps Script menggunakan Fetch
         fetch(scriptURL, {
             method: 'POST',
-            mode: 'no-cors', // Penting untuk mengelakkan isu CORS dengan Google Script
+            mode: 'no-cors',
             cache: 'no-cache',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
         })
         .then(response => {
-            // Paparkan mesej berjaya
             statusMsg.className = "success";
-            statusMsg.innerHTML = "Berjaya! Laporan telah disimpan dalam Google Sheets.";
+            statusMsg.innerHTML = "Berjaya! Laporan dan gambar telah dihantar.";
             statusMsg.style.display = "block";
             
-            // Reset form
             form.reset();
+            document.getElementById('preview').style.display = "none";
+            base64String = "";
             btn.disabled = false;
-            btn.innerHTML = "Hantar Laporan ke Database";
+            btn.innerHTML = "Hantar Laporan & Gambar";
         })
         .catch(error => {
             statusMsg.className = "error";
