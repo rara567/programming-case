@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Tiket Geomatik v3.0 (Photo Upload)</title>
+    <title>Sistem Tiket Geomatik v4.0 (Cloud Storage)</title>
     <style>
         :root { --primary: #2980b9; --danger: #e74c3c; --bg: #f5f6fa; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
@@ -80,50 +80,48 @@
 </div>
 
 <script>
-    // URL Web App anda
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzmLJUHO_KKdlCOR1DsX6lZ-eVLhWcz-J0kIlb2kiMYwTPzWNJOAJU7OlEyoOG_ouX5Eg/exec';
+    // URL Web App Terbaru (Google Drive Integration)
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxAiA93IsUJ3ehDUE3HmfYasVqZTE3y3bUlPM_vLWK-iTvR80lvIRO_nec0wHsDBRkybg/exec';
+    
     const form = document.getElementById('ticketForm');
     const btn = document.getElementById('submitBtn');
     const statusMsg = document.getElementById('statusMsg');
+    const preview = document.getElementById('preview');
     let base64String = "";
 
-    // Fungsi untuk tukar gambar ke Base64 dengan Resizing
+    // Fungsi untuk memproses gambar (Resize & Base64)
     function previewImage() {
         const file = document.getElementById('fileInput').files[0];
-        const preview = document.getElementById('preview');
         const reader = new FileReader();
 
         reader.onload = function(e) {
             const img = new Image();
             img.src = e.target.result;
             img.onload = function() {
-                // Proses Resizing untuk pastikan saiz fail kecil
+                // Resize ke 400px supaya stabil untuk upload
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                const maxWidth = 400; // Lebar maksima 400px
+                const maxWidth = 400; 
                 const scale = maxWidth / img.width;
                 canvas.width = maxWidth;
                 canvas.height = img.height * scale;
 
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                 
-                // Simpan sebagai JPEG kualiti rendah (0.7) supaya ringan untuk Google Sheets
+                // Gunakan format JPEG kualiti 0.7
                 base64String = canvas.toDataURL('image/jpeg', 0.7);
                 preview.src = base64String;
                 preview.style.display = "block";
             }
         };
-
-        if (file) {
-            reader.readAsDataURL(file);
-        }
+        if (file) { reader.readAsDataURL(file); }
     }
 
     form.addEventListener('submit', e => {
         e.preventDefault();
         
         btn.disabled = true;
-        btn.innerHTML = "Sedang Menghantar...";
+        btn.innerHTML = "Menghantar ke Cloud...";
         statusMsg.style.display = "none";
 
         const formData = {
@@ -137,17 +135,17 @@
 
         fetch(scriptURL, {
             method: 'POST',
-            mode: 'no-cors', // Penting untuk Google Apps Script
+            mode: 'no-cors',
             cache: 'no-cache',
             body: JSON.stringify(formData)
         })
         .then(() => {
             statusMsg.className = "success";
-            statusMsg.innerHTML = "Berjaya! Laporan telah disimpan dalam Google Sheets.";
+            statusMsg.innerHTML = "Berjaya! Data dan Gambar telah disimpan.";
             statusMsg.style.display = "block";
             
             form.reset();
-            document.getElementById('preview').style.display = "none";
+            preview.style.display = "none";
             base64String = "";
             btn.disabled = false;
             btn.innerHTML = "Hantar Laporan & Gambar";
