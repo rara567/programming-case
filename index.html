@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Tiket Geomatik v5.0 (Stabil)</title>
+    <title>E-Aduan Kerosakan Alat Geomatik PUO</title>
     <style>
         :root { --primary: #2980b9; --bg: #f5f6fa; }
 
@@ -12,16 +12,15 @@
             font-family: 'Segoe UI', sans-serif; 
             margin: 0; 
             padding: 20px;
-            /* Tambahan kod background */
             background-image: url('backgroundpuo.jpeg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            background-color: var(--bg); /* Fallback warna jika gambar gagal loading */
+            background-color: var(--bg);
         }
 
-        /* Container dibuat sedikit transparan supaya nampak lebih moden dengan background */
+        /* Container transparan moden */
         .container { 
             max-width: 600px; 
             margin: auto; 
@@ -31,11 +30,43 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
         }
 
-        h2 { text-align: center; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        /* Susunan Header dengan Logo */
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        .header-container img {
+            width: 60px; /* Saiz logo */
+            height: auto;
+        }
+
+        .header-container h2 { 
+            margin: 0;
+            color: var(--primary); 
+            text-align: left;
+            line-height: 1.2;
+            font-size: 1.5rem;
+        }
+
         .form-group { margin-bottom: 15px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; color: #34495e; }
         input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        #preview { width: 100%; max-height: 200px; object-fit: contain; margin-top: 10px; display: none; border: 2px dashed #ddd; border-radius: 8px; }
+        
+        #preview { 
+            width: 100%; 
+            max-height: 200px; 
+            object-fit: contain; 
+            margin-top: 10px; 
+            display: none; 
+            border: 2px dashed #ddd; 
+            border-radius: 8px; 
+        }
         
         button { 
             width: 100%; 
@@ -51,7 +82,9 @@
             color: white; 
         }
         
+        button:hover { background: #2171a3; }
         button:disabled { background: #bdc3c7; }
+        
         #statusMsg { text-align: center; margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 5px; display: none; }
         .success { background: #d4edda; color: #155724; }
     </style>
@@ -59,7 +92,11 @@
 <body>
 
 <div class="container">
-    <h2>Laporan Kerosakan Alat</h2>
+    <div class="header-container">
+        <img src="logo.png" alt="Logo PUO">
+        <h2>E-Aduan Kerosakan Alat Geomatik PUO</h2>
+    </div>
+
     <form id="ticketForm">
         <div class="form-group">
             <label>Jenis Peralatan</label>
@@ -67,12 +104,13 @@
                 <option value="Total Station">Total Station</option>
                 <option value="GNSS Receiver">GNSS Receiver</option>
                 <option value="Digital Level">Digital Level</option>
+                <option value="Lain-lain">Lain-lain</option>
             </select>
         </div>
 
         <div class="form-group">
             <label>No. Siri / No. Aset</label>
-            <input type="text" id="serialNo" required>
+            <input type="text" id="serialNo" placeholder="Masukkan No. Siri" required>
         </div>
 
         <div class="form-group">
@@ -86,18 +124,18 @@
 
         <div class="form-group">
             <label>Deskripsi Masalah</label>
-            <textarea id="desc" rows="3" required></textarea>
+            <textarea id="desc" rows="3" placeholder="Terangkan kerosakan alat..." required></textarea>
         </div>
 
         <div class="form-group">
             <label>Gambar Kerosakan</label>
             <input type="file" id="fileInput" accept="image/*" onchange="previewImage()">
-            <img id="preview" src="" alt="Preview">
+            <img id="preview" src="" alt="Pratonton Gambar">
         </div>
 
         <div class="form-group">
             <label>Nama Pelapor</label>
-            <input type="text" id="reporter" required>
+            <input type="text" id="reporter" placeholder="Nama penuh anda" required>
         </div>
 
         <button type="submit" id="submitBtn">Hantar Laporan & Gambar</button>
