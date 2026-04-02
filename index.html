@@ -3,30 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Geomatik: Ukur Aras</title>
+    <title>Kalkulator Geomatik Pro: Ukur Aras & Jarak</title>
     <style>
-        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f9; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f7f6; }
         h2 { color: #2c3e50; text-align: center; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .container { max-width: 950px; margin: auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
         table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        th { background-color: #3498db; color: white; }
-        input { width: 90%; padding: 5px; border: 1px solid #ccc; border-radius: 4px; }
-        button { background-color: #27ae60; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; width: 100%; font-size: 16px; }
-        button:hover { background-color: #219150; }
-        .result-box { background: #ecf0f1; padding: 15px; border-radius: 4px; margin-top: 20px; }
-        .status-lulus { color: green; font-weight: bold; }
-        .status-gagal { color: red; font-weight: bold; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #3498db; color: white; font-size: 14px; }
+        input { width: 90%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
+        .btn-container { display: flex; gap: 10px; }
+        button { flex: 1; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; }
+        .btn-add { background-color: #95a5a6; color: white; }
+        .btn-calc { background-color: #27ae60; color: white; }
+        button:hover { opacity: 0.9; }
+        .result-box { background: #fdfdfd; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px; margin-top: 20px; border-left: 5px solid #3498db; }
+        .status-lulus { color: #27ae60; font-weight: bold; }
+        .status-gagal { color: #e74c3c; font-weight: bold; }
+        .row-total { background-color: #eee; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Kalkulator Ukur Aras (Rise & Fall)</h2>
+    <h2>Kalkulator Ukur Aras (Rise & Fall + Jarak)</h2>
     
-    <p>Masukkan Aras Laras (RL) Mula: 
-        <input type="number" id="startRL" value="50.000" step="0.001">
-    </p>
+    <div style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
+        <p><strong>RL Mula (BM):</strong> <input type="number" id="startRL" value="50.000" step="0.001" style="width: 100px;"></p>
+        <p><strong>RL Akhir (Benchmark):</strong> <input type="number" id="endRL_Check" placeholder="Contoh: 49.995" step="0.001" style="width: 120px;"></p>
+    </div>
 
     <table id="levelTable">
         <thead>
@@ -35,29 +40,40 @@
                 <th>BS (m)</th>
                 <th>IS (m)</th>
                 <th>FS (m)</th>
-                <th>RL (m)</th>
+                <th>Jarak (m)</th>
+                <th>Rise (+)</th>
+                <th>Fall (-)</th>
+                <th>RL Terlaras (m)</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td>1</td>
                 <td><input type="number" class="bs" step="0.001"></td>
-                <td><input type="number" class="is" step="0.001"></td>
-                <td><input type="number" class="fs" step="0.001"></td>
+                <td><input type="number" class="is" step="0.001" disabled></td>
+                <td><input type="number" class="fs" step="0.001" disabled></td>
+                <td><input type="number" class="dist" value="0" readonly></td>
+                <td class="rise-cell">-</td>
+                <td class="fall-cell">-</td>
                 <td class="rl-cell">-</td>
             </tr>
-            </tbody>
+        </tbody>
     </table>
 
-    <button onclick="addRow()">Tambah Baris</button>
-    <br><br>
-    <button onclick="calculateLeveling()">Kira Sekarang</button>
+    <div class="btn-container">
+        <button class="btn-add" onclick="addRow()">Tambah Baris</button>
+        <button class="btn-calc" onclick="calculateLeveling()">Kira & Laras Ralat</button>
+    </div>
 
     <div class="result-box" id="resultArea" style="display:none;">
-        <h3>Semakan Aritmetik:</h3>
-        <p id="checkBSFS"></p>
-        <p id="checkRiseFall"></p>
-        <p id="checkRL"></p>
+        <h3>Semakan & Pelarasan:</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <p id="checkBSFS"></p>
+            <p id="checkRiseFall"></p>
+            <p id="checkRL"></p>
+            <p id="totalDist"></p>
+            <p id="misclosure"></p>
+        </div>
         <hr>
         <p id="finalStatus"></p>
     </div>
@@ -73,6 +89,9 @@
             <td><input type="number" class="bs" step="0.001"></td>
             <td><input type="number" class="is" step="0.001"></td>
             <td><input type="number" class="fs" step="0.001"></td>
+            <td><input type="number" class="dist" step="0.01"></td>
+            <td class="rise-cell">-</td>
+            <td class="fall-cell">-</td>
             <td class="rl-cell">-</td>
         `;
     }
@@ -81,55 +100,94 @@
         let bsInputs = document.getElementsByClassName('bs');
         let isInputs = document.getElementsByClassName('is');
         let fsInputs = document.getElementsByClassName('fs');
+        let distInputs = document.getElementsByClassName('dist');
         let rlCells = document.getElementsByClassName('rl-cell');
+        let riseCells = document.getElementsByClassName('rise-cell');
+        let fallCells = document.getElementsByClassName('fall-cell');
         
-        let currentRL = parseFloat(document.getElementById('startRL').value);
-        rlCells[0].innerText = currentRL.toFixed(3);
+        let startRL = parseFloat(document.getElementById('startRL').value) || 0;
+        let knownEndRL = parseFloat(document.getElementById('endRL_Check').value);
+        
+        let currentRL = startRL;
+        let sumBS = 0, sumFS = 0, sumRise = 0, sumFall = 0, totalDist = 0;
+        let cumulativeDist = [0];
+        let rawRLs = [startRL];
 
-        let sumBS = 0;
-        let sumFS = 0;
-        let sumRise = 0;
-        let sumFall = 0;
-
+        rlCells[0].innerText = startRL.toFixed(3);
         let lastReading = parseFloat(bsInputs[0].value) || 0;
         sumBS += lastReading;
 
+        // 1. Pengiraan Rise, Fall & RL Mentah
         for (let i = 1; i < bsInputs.length; i++) {
             let bs = parseFloat(bsInputs[i].value) || 0;
             let is = parseFloat(isInputs[i].value) || 0;
             let fs = parseFloat(fsInputs[i].value) || 0;
+            let dist = parseFloat(distInputs[i].value) || 0;
 
-            let currentReading = (is !== 0) ? is : fs;
+            totalDist += dist;
+            cumulativeDist.push(totalDist);
+
+            let currentReading = (isInputs[i].value !== "") ? is : fs;
             let diff = lastReading - currentReading;
 
-            if (diff > 0) sumRise += diff;
-            else sumFall += Math.abs(diff);
+            if (diff > 0) {
+                sumRise += diff;
+                riseCells[i].innerText = diff.toFixed(3);
+                fallCells[i].innerText = "-";
+            } else {
+                sumFall += Math.abs(diff);
+                riseCells[i].innerText = "-";
+                fallCells[i].innerText = Math.abs(diff).toFixed(3);
+            }
 
             currentRL += diff;
-            rlCells[i].innerText = currentRL.toFixed(3);
+            rawRLs.push(currentRL);
 
-            // Update reading terakhir untuk stesen seterusnya
-            lastReading = (bs !== 0) ? bs : currentReading;
-            
-            if (bs !== 0) sumBS += bs;
-            if (fs !== 0) sumFS += fs;
+            lastReading = (bsInputs[i].value !== "") ? bs : currentReading;
+            if (bsInputs[i].value !== "") sumBS += bs;
+            if (fsInputs[i].value !== "") sumFS += fs;
         }
 
-        // Papar Keputusan
+        // 2. Pelarasan Ralat Berdasarkan Jarak (Bode Rule)
+        let observedEndRL = rawRLs[rawRLs.length - 1];
+        let error = 0;
+        if (!isNaN(knownEndRL)) {
+            error = observedEndRL - knownEndRL; // Misclosure
+        }
+
+        for (let i = 0; i < rawRLs.length; i++) {
+            let correction = 0;
+            if (totalDist > 0) {
+                correction = -(cumulativeDist[i] / totalDist) * error;
+            }
+            let adjustedRL = rawRLs[i] + correction;
+            rlCells[i].innerText = adjustedRL.toFixed(3);
+        }
+
+        // 3. Paparan Keputusan
         document.getElementById('resultArea').style.display = "block";
-        let diffBSFS = sumBS - sumFS;
-        let diffRF = sumRise - sumFall;
-        let diffRL = currentRL - parseFloat(document.getElementById('startRL').value);
+        document.getElementById('checkBSFS').innerText = "ΣBS - ΣFS = " + (sumBS - sumFS).toFixed(3);
+        document.getElementById('checkRiseFall').innerText = "ΣRise - ΣFall = " + (sumRise - sumFall).toFixed(3);
+        document.getElementById('checkRL').innerText = "RL Akhir - RL Awal = " + (observedEndRL - startRL).toFixed(3);
+        document.getElementById('totalDist').innerText = "Jumlah Jarak = " + totalDist.toFixed(2) + " m";
 
-        document.getElementById('checkBSFS').innerText = "ΣBS - ΣFS = " + diffBSFS.toFixed(3);
-        document.getElementById('checkRiseFall').innerText = "ΣRise - ΣFall = " + diffRF.toFixed(3);
-        document.getElementById('checkRL').innerText = "RL Akhir - RL Awal = " + diffRL.toFixed(3);
-
-        if (Math.abs(diffBSFS - diffRF) < 0.001 && Math.abs(diffRF - diffRL) < 0.001) {
-            document.getElementById('finalStatus').innerHTML = "Status: <span class='status-lulus'>SEMAKAN OK</span>";
+        let statusHTML = "";
+        if (!isNaN(knownEndRL)) {
+            let misclosureMM = (error * 1000).toFixed(1);
+            document.getElementById('misclosure').innerText = "Ralat Penutup = " + misclosureMM + " mm";
+            
+            // Toleransi mudah: 12√K mm (K dalam km)
+            let tolerance = 12 * Math.sqrt(totalDist / 1000);
+            if (Math.abs(misclosureMM) <= tolerance) {
+                statusHTML = "Status: <span class='status-lulus'>SEMAKAN & PELARASAN OK</span>";
+            } else {
+                statusHTML = "Status: <span class='status-gagal'>RALAT TINGGI (Luar Toleransi)</span>";
+            }
         } else {
-            document.getElementById('finalStatus').innerHTML = "Status: <span class='status-gagal'>RALAT PENGIRAAN</span>";
+            document.getElementById('misclosure').innerText = "Ralat Penutup = N/A (Masukkan RL Akhir)";
+            statusHTML = "Status: <span class='status-lulus'>ARITMETIK OK</span>";
         }
+        document.getElementById('finalStatus').innerHTML = statusHTML;
     }
 </script>
 
