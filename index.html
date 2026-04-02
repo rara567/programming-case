@@ -3,193 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Geomatik Pro: Ukur Aras & Jarak</title>
+    <title>Sistem Tiket Kerosakan Alat Geomatik</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f7f6; }
-        h2 { color: #2c3e50; text-align: center; }
-        .container { max-width: 950px; margin: auto; background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-        th { background-color: #3498db; color: white; font-size: 14px; }
-        input { width: 90%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
-        .btn-container { display: flex; gap: 10px; }
-        button { flex: 1; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; }
-        .btn-add { background-color: #95a5a6; color: white; }
-        .btn-calc { background-color: #27ae60; color: white; }
-        button:hover { opacity: 0.9; }
-        .result-box { background: #fdfdfd; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px; margin-top: 20px; border-left: 5px solid #3498db; }
-        .status-lulus { color: #27ae60; font-weight: bold; }
-        .status-gagal { color: #e74c3c; font-weight: bold; }
-        .row-total { background-color: #eee; font-weight: bold; }
+        :root { --primary: #e74c3c; --secondary: #2c3e50; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        /* Form Styling */
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: var(--secondary); margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        label { display: block; font-weight: bold; margin: 10px 0 5px; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.3s; }
+        button:hover { background: #c0392b; }
+
+        /* List Styling */
+        .ticket-list { max-height: 550px; overflow-y: auto; }
+        .ticket-item { background: #fff; border-left: 5px solid var(--primary); padding: 15px; margin-bottom: 10px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; }
+        .ticket-header { display: flex; justify-content: space-between; font-size: 12px; color: #7f8c8d; }
+        .priority-tag { padding: 2px 8px; border-radius: 10px; font-size: 10px; color: white; }
+        .high { background: #e74c3c; }
+        .medium { background: #f39c12; }
+        .low { background: #3498db; }
+        .status-badge { font-size: 11px; font-weight: bold; color: #27ae60; margin-top: 5px; display: block; }
     </style>
 </head>
 <body>
 
+<h1 style="text-align:center; color: #2c3e50;">Geomatic Equipment Ticketing System</h1>
+
 <div class="container">
-    <h2>Kalkulator Ukur Aras (Rise & Fall + Jarak)</h2>
-    
-    <div style="margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap;">
-        <p><strong>RL Mula (BM):</strong> <input type="number" id="startRL" value="50.000" step="0.001" style="width: 100px;"></p>
-        <p><strong>RL Akhir (Benchmark):</strong> <input type="number" id="endRL_Check" placeholder="Contoh: 49.995" step="0.001" style="width: 120px;"></p>
+    <div class="card">
+        <h2>Hantar Laporan Kerosakan</h2>
+        <form id="faultForm">
+            <label>Jenis Peralatan</label>
+            <select id="toolType" required>
+                <option value="Total Station">Total Station</option>
+                <option value="GNSS Receiver">GNSS Receiver</option>
+                <option value="Digital Level">Digital Level</option>
+                <option value="Drone/UAV">Drone/UAV</option>
+                <option value="Aksesori (Prism/Tripod)">Aksesori (Prism/Tripod)</option>
+            </select>
+
+            <label>No. Siri / No. Aset</label>
+            <input type="text" id="serialNo" placeholder="Contoh: TS-2024-001" required>
+
+            <label>Tahap Keutamaan</label>
+            <select id="priority">
+                <option value="high">Kritikal (Alat tidak boleh guna langsung)</option>
+                <option value="medium">Sederhana (Ada ralat/rosak kecil)</option>
+                <option value="low">Rutin (Perlu kalibrasi/servis)</option>
+            </select>
+
+            <label>Deskripsi Kerosakan</label>
+            <textarea id="desc" rows="4" placeholder="Terangkan kerosakan secara terperinci..." required></textarea>
+
+            <label>Nama Pelapor</label>
+            <input type="text" id="reporter" placeholder="Nama anda" required>
+
+            <button type="submit">Hantar Tiket Kerosakan</button>
+        </form>
     </div>
 
-    <table id="levelTable">
-        <thead>
-            <tr>
-                <th>Stesen</th>
-                <th>BS (m)</th>
-                <th>IS (m)</th>
-                <th>FS (m)</th>
-                <th>Jarak (m)</th>
-                <th>Rise (+)</th>
-                <th>Fall (-)</th>
-                <th>RL Terlaras (m)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td><input type="number" class="bs" step="0.001"></td>
-                <td><input type="number" class="is" step="0.001" disabled></td>
-                <td><input type="number" class="fs" step="0.001" disabled></td>
-                <td><input type="number" class="dist" value="0" readonly></td>
-                <td class="rise-cell">-</td>
-                <td class="fall-cell">-</td>
-                <td class="rl-cell">-</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="btn-container">
-        <button class="btn-add" onclick="addRow()">Tambah Baris</button>
-        <button class="btn-calc" onclick="calculateLeveling()">Kira & Laras Ralat</button>
-    </div>
-
-    <div class="result-box" id="resultArea" style="display:none;">
-        <h3>Semakan & Pelarasan:</h3>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <p id="checkBSFS"></p>
-            <p id="checkRiseFall"></p>
-            <p id="checkRL"></p>
-            <p id="totalDist"></p>
-            <p id="misclosure"></p>
+    <div class="card">
+        <h2>Senarai Tiket Aktif</h2>
+        <div id="ticketContainer" class="ticket-list">
+            <p style="color: #95a5a6; text-align: center;">Tiada laporan kerosakan setakat ini.</p>
         </div>
-        <hr>
-        <p id="finalStatus"></p>
     </div>
 </div>
 
 <script>
-    function addRow() {
-        let table = document.getElementById("levelTable").getElementsByTagName('tbody')[0];
-        let rowCount = table.rows.length;
-        let row = table.insertRow(rowCount);
-        row.innerHTML = `
-            <td>${rowCount + 1}</td>
-            <td><input type="number" class="bs" step="0.001"></td>
-            <td><input type="number" class="is" step="0.001"></td>
-            <td><input type="number" class="fs" step="0.001"></td>
-            <td><input type="number" class="dist" step="0.01"></td>
-            <td class="rise-cell">-</td>
-            <td class="fall-cell">-</td>
-            <td class="rl-cell">-</td>
+    const faultForm = document.getElementById('faultForm');
+    const ticketContainer = document.getElementById('ticketContainer');
+
+    faultForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Ambil Data
+        const tool = document.getElementById('toolType').value;
+        const serial = document.getElementById('serialNo').value;
+        const priority = document.getElementById('priority').value;
+        const desc = document.getElementById('desc').value;
+        const reporter = document.getElementById('reporter').value;
+        const time = new Date().toLocaleString();
+
+        // Cipta Elemen Tiket
+        const ticket = document.createElement('div');
+        ticket.className = 'ticket-item';
+        
+        ticket.innerHTML = `
+            <div class="ticket-header">
+                <span>ID: #${Math.floor(Math.random() * 1000)}</span>
+                <span>${time}</span>
+            </div>
+            <strong style="font-size: 16px;">${tool} (${serial})</strong>
+            <span class="priority-tag ${priority}">${priority.toUpperCase()}</span>
+            <p style="font-size: 14px; margin: 10px 0;">${desc}</p>
+            <small>Dilapor oleh: <b>${reporter}</b></small>
+            <span class="status-badge">● STATUS: PENDING REVIEW</span>
         `;
-    }
 
-    function calculateLeveling() {
-        let bsInputs = document.getElementsByClassName('bs');
-        let isInputs = document.getElementsByClassName('is');
-        let fsInputs = document.getElementsByClassName('fs');
-        let distInputs = document.getElementsByClassName('dist');
-        let rlCells = document.getElementsByClassName('rl-cell');
-        let riseCells = document.getElementsByClassName('rise-cell');
-        let fallCells = document.getElementsByClassName('fall-cell');
-        
-        let startRL = parseFloat(document.getElementById('startRL').value) || 0;
-        let knownEndRL = parseFloat(document.getElementById('endRL_Check').value);
-        
-        let currentRL = startRL;
-        let sumBS = 0, sumFS = 0, sumRise = 0, sumFall = 0, totalDist = 0;
-        let cumulativeDist = [0];
-        let rawRLs = [startRL];
-
-        rlCells[0].innerText = startRL.toFixed(3);
-        let lastReading = parseFloat(bsInputs[0].value) || 0;
-        sumBS += lastReading;
-
-        // 1. Pengiraan Rise, Fall & RL Mentah
-        for (let i = 1; i < bsInputs.length; i++) {
-            let bs = parseFloat(bsInputs[i].value) || 0;
-            let is = parseFloat(isInputs[i].value) || 0;
-            let fs = parseFloat(fsInputs[i].value) || 0;
-            let dist = parseFloat(distInputs[i].value) || 0;
-
-            totalDist += dist;
-            cumulativeDist.push(totalDist);
-
-            let currentReading = (isInputs[i].value !== "") ? is : fs;
-            let diff = lastReading - currentReading;
-
-            if (diff > 0) {
-                sumRise += diff;
-                riseCells[i].innerText = diff.toFixed(3);
-                fallCells[i].innerText = "-";
-            } else {
-                sumFall += Math.abs(diff);
-                riseCells[i].innerText = "-";
-                fallCells[i].innerText = Math.abs(diff).toFixed(3);
-            }
-
-            currentRL += diff;
-            rawRLs.push(currentRL);
-
-            lastReading = (bsInputs[i].value !== "") ? bs : currentReading;
-            if (bsInputs[i].value !== "") sumBS += bs;
-            if (fsInputs[i].value !== "") sumFS += fs;
+        // Masukkan ke dalam senarai (paling atas)
+        if (ticketContainer.innerHTML.includes("Tiada laporan")) {
+            ticketContainer.innerHTML = "";
         }
+        ticketContainer.prepend(ticket);
 
-        // 2. Pelarasan Ralat Berdasarkan Jarak (Bode Rule)
-        let observedEndRL = rawRLs[rawRLs.length - 1];
-        let error = 0;
-        if (!isNaN(knownEndRL)) {
-            error = observedEndRL - knownEndRL; // Misclosure
-        }
-
-        for (let i = 0; i < rawRLs.length; i++) {
-            let correction = 0;
-            if (totalDist > 0) {
-                correction = -(cumulativeDist[i] / totalDist) * error;
-            }
-            let adjustedRL = rawRLs[i] + correction;
-            rlCells[i].innerText = adjustedRL.toFixed(3);
-        }
-
-        // 3. Paparan Keputusan
-        document.getElementById('resultArea').style.display = "block";
-        document.getElementById('checkBSFS').innerText = "ΣBS - ΣFS = " + (sumBS - sumFS).toFixed(3);
-        document.getElementById('checkRiseFall').innerText = "ΣRise - ΣFall = " + (sumRise - sumFall).toFixed(3);
-        document.getElementById('checkRL').innerText = "RL Akhir - RL Awal = " + (observedEndRL - startRL).toFixed(3);
-        document.getElementById('totalDist').innerText = "Jumlah Jarak = " + totalDist.toFixed(2) + " m";
-
-        let statusHTML = "";
-        if (!isNaN(knownEndRL)) {
-            let misclosureMM = (error * 1000).toFixed(1);
-            document.getElementById('misclosure').innerText = "Ralat Penutup = " + misclosureMM + " mm";
-            
-            // Toleransi mudah: 12√K mm (K dalam km)
-            let tolerance = 12 * Math.sqrt(totalDist / 1000);
-            if (Math.abs(misclosureMM) <= tolerance) {
-                statusHTML = "Status: <span class='status-lulus'>SEMAKAN & PELARASAN OK</span>";
-            } else {
-                statusHTML = "Status: <span class='status-gagal'>RALAT TINGGI (Luar Toleransi)</span>";
-            }
-        } else {
-            document.getElementById('misclosure').innerText = "Ralat Penutup = N/A (Masukkan RL Akhir)";
-            statusHTML = "Status: <span class='status-lulus'>ARITMETIK OK</span>";
-        }
-        document.getElementById('finalStatus').innerHTML = statusHTML;
-    }
+        // Reset Borang
+        faultForm.reset();
+        alert("Laporan telah dihantar ke stor bengkel!");
+    });
 </script>
 
 </body>
 </html>
+
