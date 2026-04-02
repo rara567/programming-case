@@ -87,17 +87,33 @@
     const statusMsg = document.getElementById('statusMsg');
     let base64String = "";
 
-    // Fungsi untuk tukar gambar ke Base64 (Teks)
+    // Fungsi untuk tukar gambar ke Base64 dengan Resizing
     function previewImage() {
         const file = document.getElementById('fileInput').files[0];
-        const reader = new FileReader();
         const preview = document.getElementById('preview');
+        const reader = new FileReader();
 
-        reader.onloadend = function() {
-            base64String = reader.result;
-            preview.src = reader.result;
-            preview.style.display = "block";
-        }
+        reader.onload = function(e) {
+            const img = new Image();
+            img.src = e.target.result;
+            img.onload = function() {
+                // Proses Resizing untuk pastikan saiz fail kecil
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const maxWidth = 400; // Lebar maksima 400px
+                const scale = maxWidth / img.width;
+                canvas.width = maxWidth;
+                canvas.height = img.height * scale;
+
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                // Simpan sebagai JPEG kualiti rendah (0.7) supaya ringan untuk Google Sheets
+                base64String = canvas.toDataURL('image/jpeg', 0.7);
+                preview.src = base64String;
+                preview.style.display = "block";
+            }
+        };
+
         if (file) {
             reader.readAsDataURL(file);
         }
@@ -107,7 +123,7 @@
         e.preventDefault();
         
         btn.disabled = true;
-        btn.innerHTML = "Sedang Memproses Gambar & Data...";
+        btn.innerHTML = "Sedang Menghantar...";
         statusMsg.style.display = "none";
 
         const formData = {
@@ -116,19 +132,18 @@
             priority: document.getElementById('priority').value,
             masalah: document.getElementById('desc').value,
             pelapor: document.getElementById('reporter').value,
-            gambar: base64String // Data gambar dihantar di sini
+            gambar: base64String 
         };
 
         fetch(scriptURL, {
             method: 'POST',
-            mode: 'no-cors',
+            mode: 'no-cors', // Penting untuk Google Apps Script
             cache: 'no-cache',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
         })
-        .then(response => {
+        .then(() => {
             statusMsg.className = "success";
-            statusMsg.innerHTML = "Berjaya! Laporan dan gambar telah dihantar.";
+            statusMsg.innerHTML = "Berjaya! Laporan telah disimpan dalam Google Sheets.";
             statusMsg.style.display = "block";
             
             form.reset();
