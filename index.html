@@ -10,12 +10,11 @@
             --secondary: #3498db;
             --bg: #f5f6fa; 
             --text: #2c3e50;
-            --admin-color: #e67e22;
+            --danger: #e74c3c;
         }
 
-        /* Latar Belakang Penuh */
         body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif; 
             margin: 0; 
             padding: 40px 20px;
             background-image: url('backgroundpuo.jpeg');
@@ -24,10 +23,9 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
             background-color: var(--bg);
-            color: var(--text);
         }
 
-        /* --- SISTEM LOG MASUK STYLING --- */
+        /* --- LOG MASUK & DAFTAR OVERLAY --- */
         #loginOverlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -41,9 +39,9 @@
 
         .login-box {
             background: white;
-            padding: 40px;
+            padding: 35px;
             border-radius: 24px;
-            width: 100%;
+            width: 90%;
             max-width: 400px;
             text-align: center;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
@@ -63,6 +61,7 @@
             cursor: pointer;
             background: #f9f9f9;
             font-weight: bold;
+            transition: 0.3s;
         }
 
         .role-btn.active {
@@ -71,17 +70,15 @@
             color: var(--primary);
         }
 
-        /* --- KEKALKAN STYLING ASAL --- */
+        /* --- CONTAINER UTAMA --- */
         .container { 
             max-width: 650px; 
             margin: auto; 
-            background: rgba(255, 255, 255, 0.92); 
+            background: rgba(255, 255, 255, 0.95); 
             padding: 40px; 
             border-radius: 24px; 
             box-shadow: 0 20px 40px rgba(0,0,0,0.2); 
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            display: none; /* Sembunyi sehingga login berjaya */
+            display: none; 
         }
 
         .header-container {
@@ -94,113 +91,87 @@
             padding-bottom: 20px;
         }
 
-        .header-container img {
-            width: 70px;
-            height: auto;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
-        }
+        .header-container img { width: 60px; height: auto; }
 
-        .header-container h2 { 
-            margin: 0;
-            color: var(--primary); 
-            font-size: 1.6rem;
-            font-weight: 800;
-            line-height: 1.2;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--text); font-size: 0.95rem; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--text); }
 
         input, select, textarea { 
-            width: 100%; 
-            padding: 14px; 
-            border: 2px solid #e1e8ed; 
-            border-radius: 12px; 
-            box-sizing: border-box; 
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: white;
+            width: 100%; padding: 14px; 
+            border: 2px solid #e1e8ed; border-radius: 12px; 
+            font-size: 1rem; box-sizing: border-box;
         }
 
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--secondary);
-            outline: none;
-            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.15);
-        }
+        input:focus { border-color: var(--secondary); outline: none; }
 
-        #preview { 
-            width: 100%; 
-            max-height: 250px; 
-            object-fit: cover; 
-            margin-top: 15px; 
-            display: none; 
-            border: 3px dashed var(--secondary); 
-            border-radius: 15px; 
-        }
-        
+        /* BUTANG */
         button { 
-            width: 100%; 
-            padding: 18px; 
-            border: none; 
-            border-radius: 12px; 
-            font-size: 1.1rem; 
-            font-weight: 700; 
-            cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            margin-top: 15px; 
-            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
-            color: white; 
-            box-shadow: 0 8px 15px rgba(41, 128, 185, 0.2);
-        }
-        
-        button:hover { 
-            transform: translateY(-3px);
-            filter: brightness(1.1);
+            width: 100%; padding: 16px; border: none; border-radius: 12px; 
+            font-size: 1.1rem; font-weight: 700; cursor: pointer; 
+            transition: 0.3s; margin-top: 10px;
         }
 
-        #logoutBtn {
-            background: #e74c3c;
-            padding: 8px 15px;
-            font-size: 0.8rem;
-            width: auto;
-            position: absolute;
-            top: 10px;
-            right: 10px;
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(41,128,185,0.3); }
+
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); margin-top: 5px; font-size: 0.9rem; padding: 10px; }
+
+        .btn-logout { 
+            background: var(--danger); color: white; margin-top: 30px; 
+            font-size: 1rem; opacity: 0.9;
         }
 
-        #statusMsg { 
-            text-align: center; 
-            margin-top: 20px; 
-            font-weight: bold; 
-            padding: 15px; 
-            border-radius: 12px; 
-            display: none; 
-        }
-        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        #preview { width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px; margin-top: 10px; display: none; }
+
+        #statusMsg { text-align: center; margin-top: 20px; font-weight: bold; padding: 15px; border-radius: 12px; display: none; }
+        .success { background: #d4edda; color: #155724; }
+
+        .link-text { color: var(--primary); cursor: pointer; text-decoration: underline; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
 <div id="loginOverlay">
-    <div class="login-box">
-        <img src="logo.png" style="width: 60px; margin-bottom: 15px;">
-        <h3>Log Masuk Sistem</h3>
-        <div class="role-selector">
+    <div class="login-box" id="loginBox">
+        <img src="logo.png" style="width: 70px; margin-bottom: 10px;">
+        <h3 id="loginTitle">Log Masuk Sistem</h3>
+        
+        <div class="role-selector" id="roleSelectArea">
             <button class="role-btn active" onclick="setRole('user')">Pengguna</button>
             <button class="role-btn" onclick="setRole('admin')">Admin</button>
         </div>
+
         <div class="form-group">
-            <input type="password" id="passInput" placeholder="Masukkan Kata Laluan">
+            <input type="text" id="idInput" placeholder="ID Pelajar (e.g: F1010)">
         </div>
-        <button onclick="checkLogin()">Masuk Sekarang</button>
-        <p id="loginErr" style="color:red; font-size: 0.8rem; margin-top:10px; display:none;">Kata laluan salah!</p>
+        <div class="form-group">
+            <input type="password" id="passInput" placeholder="Kata Laluan">
+        </div>
+
+        <button class="btn-primary" onclick="checkLogin()">Masuk Sekarang</button>
+        
+        <p id="signUpPrompt" style="margin-top:15px; font-size:0.9rem;">
+            Tiada akaun? <span class="link-text" onclick="toggleAuth('signup')">Daftar Sini</span>
+        </p>
+        <p id="loginErr" style="color:red; font-size: 0.8rem; margin-top:10px; display:none;">ID atau Kata Laluan Salah!</p>
+    </div>
+
+    <div class="login-box" id="signupBox" style="display:none;">
+        <h3 style="margin-top:0;">Daftar Akaun Baru</h3>
+        <div class="form-group">
+            <label>ID Pelajar</label>
+            <input type="text" id="regId" placeholder="Contoh: F1010">
+        </div>
+        <div class="form-group">
+            <label>Kata Laluan Baru</label>
+            <input type="password" id="regPass" placeholder="Cipta Kata Laluan">
+        </div>
+        <button class="btn-primary" onclick="handleSignUp()">Simpan Akaun</button>
+        <button class="btn-outline" onclick="toggleAuth('login')">Kembali ke Log Masuk</button>
     </div>
 </div>
 
 <div class="container" id="mainApp">
-    <button id="logoutBtn" onclick="location.reload()">Log Keluar</button>
     <div class="header-container">
         <img src="logo.png" alt="Logo PUO">
         <h2>E-Aduan Kerosakan Alat Geomatik PUO</h2>
@@ -209,7 +180,7 @@
     <form id="ticketForm">
         <div class="form-group">
             <label>Jenis Peralatan</label>
-            <select id="toolType">
+            <select id="toolType" required>
                 <option value="" disabled selected>Pilih Alatan...</option>
                 <optgroup label="Alat Utama">
                     <option value="Total Station">Total Station</option>
@@ -249,48 +220,87 @@
         <div class="form-group">
             <label>Gambar Kerosakan</label>
             <input type="file" id="fileInput" accept="image/*" onchange="previewImage()">
-            <img id="preview" src="" alt="Pratonton Gambar">
+            <img id="preview" src="">
         </div>
 
         <div class="form-group">
-            <label>Nama Pelapor</label>
-            <input type="text" id="reporter" placeholder="Masukkan nama penuh anda" required>
+            <label>Nama Pelapor (ID Pelajar)</label>
+            <input type="text" id="reporter" readonly style="background: #eee; cursor: not-allowed;">
         </div>
 
-        <button type="submit" id="submitBtn">Hantar Laporan & Gambar</button>
+        <button type="submit" id="submitBtn" class="btn-primary">Hantar Laporan & Gambar</button>
     </form>
+    
     <div id="statusMsg"></div>
+
+    <button class="btn-logout" onclick="location.reload()">Log Keluar Sistem</button>
 </div>
 
 <script>
-    // --- LOGIK LOG MASUK ---
+    // --- KONFIGURASI ---
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxoace7fkEYJhqhdpRKixVzV_puFqXcyghqcI6QFgYd4HeAMmXUGK31IM8AgOtupX0tgw/exec';
     let currentRole = 'user';
-    const PASSWORDS = {
-        admin: 'admin123',  // Ganti dengan pass admin anda
-        user: 'user123'     // Ganti dengan pass user anda
-    };
+    
+    // Kata laluan admin statik (Boleh diubah)
+    const ADMIN_PASS = "admin123";
 
+    // --- LOGIK AUTHENTICATION ---
     function setRole(role) {
         currentRole = role;
         document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
         event.target.classList.add('active');
+        
+        // Sembunyikan pendaftaran jika pilih admin
+        document.getElementById('signUpPrompt').style.display = (role === 'admin') ? 'none' : 'block';
+        document.getElementById('idInput').placeholder = (role === 'admin') ? "Username Admin" : "ID Pelajar (e.g: F1010)";
+    }
+
+    function toggleAuth(mode) {
+        document.getElementById('loginBox').style.display = (mode === 'login') ? 'block' : 'none';
+        document.getElementById('signupBox').style.display = (mode === 'signup') ? 'block' : 'none';
+    }
+
+    function handleSignUp() {
+        const id = document.getElementById('regId').value.trim().toUpperCase();
+        const pass = document.getElementById('regPass').value;
+
+        if(!id || !pass) return alert("Sila isi semua ruangan!");
+        
+        // Simpan dalam LocalStorage (Simulasi Database Pelajar)
+        localStorage.setItem('user_' + id, pass);
+        alert("Pendaftaran Berjaya! Sila log masuk.");
+        toggleAuth('login');
     }
 
     function checkLogin() {
-        const input = document.getElementById('passInput').value;
+        const id = document.getElementById('idInput').value.trim().toUpperCase();
+        const pass = document.getElementById('passInput').value;
         const err = document.getElementById('loginErr');
-        
-        if(input === PASSWORDS[currentRole]) {
-            document.getElementById('loginOverlay').style.display = 'none';
-            document.getElementById('mainApp').style.display = 'block';
+
+        if(currentRole === 'admin') {
+            if(id === "ADMIN" && pass === ADMIN_PASS) {
+                proceedToApp("ADMIN");
+            } else {
+                err.style.display = 'block';
+            }
         } else {
-            err.style.display = 'block';
+            // Check LocalStorage untuk pelajar
+            const storedPass = localStorage.getItem('user_' + id);
+            if(storedPass && storedPass === pass) {
+                proceedToApp(id);
+            } else {
+                err.style.display = 'block';
+            }
         }
     }
 
-    // --- KOD ASAL ANDA (TIADA PERUBAHAN) ---
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxoace7fkEYJhqhdpRKixVzV_puFqXcyghqcI6QFgYd4HeAMmXUGK31IM8AgOtupX0tgw/exec';
-    
+    function proceedToApp(userId) {
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+        document.getElementById('reporter').value = userId;
+    }
+
+    // --- LOGIK BORANG (KEKALKAN FEATURES ASAL) ---
     const form = document.getElementById('ticketForm');
     const btn = document.getElementById('submitBtn');
     const statusMsg = document.getElementById('statusMsg');
@@ -323,7 +333,7 @@
     form.addEventListener('submit', e => {
         e.preventDefault();
         btn.disabled = true;
-        btn.innerHTML = "Memproses Laporan...";
+        btn.innerHTML = "Sedang Menghantar...";
 
         const formData = {
             alat: document.getElementById('toolType').value,
@@ -340,8 +350,8 @@
             body: JSON.stringify(formData)
         })
         .then(() => {
-            statusMsg.className = "success";
-            statusMsg.innerHTML = "✅ Laporan Berjaya Dihantar ke Bengkel Geomatik!";
+            statusMsg.className = "status-msg success";
+            statusMsg.innerHTML = "✅ Laporan Berjaya Dihantar!";
             statusMsg.style.display = "block";
             form.reset();
             document.getElementById('preview').style.display = "none";
@@ -351,9 +361,8 @@
             window.scrollTo({top: 0, behavior: 'smooth'});
         })
         .catch(error => {
-            alert("Ralat Teknikal: " + error.message);
+            alert("Ralat: " + error.message);
             btn.disabled = false;
-            btn.innerHTML = "Cuba Lagi";
         });
     });
 </script>
