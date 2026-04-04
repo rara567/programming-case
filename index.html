@@ -104,7 +104,6 @@
 
         input:focus { border-color: var(--secondary); outline: none; }
 
-        /* BUTANG */
         button { 
             width: 100%; padding: 16px; border: none; border-radius: 12px; 
             font-size: 1.1rem; font-weight: 700; cursor: pointer; 
@@ -134,7 +133,7 @@
 <div id="loginOverlay">
     <div class="login-box" id="loginBox">
         <img src="logo.png" style="width: 70px; margin-bottom: 10px;">
-        <h3 id="loginTitle">Log Masuk Sistem</h3>
+        <h3 id="loginTitle">Log Masuk Sistem e-Aduan</h3>
         
         <div class="role-selector" id="roleSelectArea">
             <button class="role-btn active" onclick="setRole('user')">Pengguna</button>
@@ -204,6 +203,11 @@
         </div>
 
         <div class="form-group">
+            <label>No. Pendaftaran</label>
+            <input type="text" id="regNo" placeholder="Sila isi No. Pendaftaran alat" required>
+        </div>
+
+        <div class="form-group">
             <label>Tahap Kerosakan</label>
             <select id="priority">
                 <option value="High">Kritikal (Tidak Boleh Diguna)</option>
@@ -240,17 +244,14 @@
     // --- KONFIGURASI ---
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxoace7fkEYJhqhdpRKixVzV_puFqXcyghqcI6QFgYd4HeAMmXUGK31IM8AgOtupX0tgw/exec';
     let currentRole = 'user';
-    
-    // Kata laluan admin statik (Boleh diubah)
     const ADMIN_PASS = "admin123";
 
     // --- LOGIK AUTHENTICATION ---
     function setRole(role) {
         currentRole = role;
         document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
+        if (event) event.target.classList.add('active');
         
-        // Sembunyikan pendaftaran jika pilih admin
         document.getElementById('signUpPrompt').style.display = (role === 'admin') ? 'none' : 'block';
         document.getElementById('idInput').placeholder = (role === 'admin') ? "Username Admin" : "ID Pelajar (e.g: F1010)";
     }
@@ -263,10 +264,7 @@
     function handleSignUp() {
         const id = document.getElementById('regId').value.trim().toUpperCase();
         const pass = document.getElementById('regPass').value;
-
         if(!id || !pass) return alert("Sila isi semua ruangan!");
-        
-        // Simpan dalam LocalStorage (Simulasi Database Pelajar)
         localStorage.setItem('user_' + id, pass);
         alert("Pendaftaran Berjaya! Sila log masuk.");
         toggleAuth('login');
@@ -284,7 +282,6 @@
                 err.style.display = 'block';
             }
         } else {
-            // Check LocalStorage untuk pelajar
             const storedPass = localStorage.getItem('user_' + id);
             if(storedPass && storedPass === pass) {
                 proceedToApp(id);
@@ -300,7 +297,7 @@
         document.getElementById('reporter').value = userId;
     }
 
-    // --- LOGIK BORANG (KEKALKAN FEATURES ASAL) ---
+    // --- LOGIK BORANG ---
     const form = document.getElementById('ticketForm');
     const btn = document.getElementById('submitBtn');
     const statusMsg = document.getElementById('statusMsg');
@@ -338,6 +335,7 @@
         const formData = {
             alat: document.getElementById('toolType').value,
             serial: document.getElementById('serialNo').value,
+            pendaftaran: document.getElementById('regNo').value, // DATA BARU
             priority: document.getElementById('priority').value,
             masalah: document.getElementById('desc').value,
             pelapor: document.getElementById('reporter').value,
@@ -363,6 +361,7 @@
         .catch(error => {
             alert("Ralat: " + error.message);
             btn.disabled = false;
+            btn.innerHTML = "Hantar Laporan & Gambar";
         });
     });
 </script>
