@@ -199,12 +199,12 @@
 
         <div class="form-group">
             <label>No. Siri / No. Aset</label>
-            <input type="text" id="serialNo" placeholder="Contoh: PUO/GEO/TS-01" required>
+            <input type="text" id="serialNo" placeholder="" required>
         </div>
 
         <div class="form-group">
             <label>No. Pendaftaran</label>
-            <input type="text" id="regNo" placeholder="Sila isi No. Pendaftaran alat" required>
+            <input type="text" id="regNo" placeholder="" required>
         </div>
 
         <div class="form-group">
@@ -229,7 +229,7 @@
 
         <div class="form-group">
             <label>Nama Pelapor</label>
-            <input type="text" id="reporter" placeholder="Sila masukkan nama anda" required>
+            <input type="text" id="reporter" placeholder="" required>
         </div>
 
         <button type="submit" id="submitBtn" class="btn-primary">Hantar Laporan & Gambar</button>
@@ -294,8 +294,9 @@
     function proceedToApp(userId) {
         document.getElementById('loginOverlay').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
-        // Mengisi ID secara automatik sebagai cadangan, tetapi kini boleh diubah
-        document.getElementById('reporter').value = userId; 
+        
+        // DIBAIK PULIH: Ruangan Nama Pelapor dibiarkan kosong sepenuhnya
+        document.getElementById('reporter').value = ""; 
     }
 
     // --- LOGIK BORANG ---
