@@ -228,8 +228,8 @@
         </div>
 
         <div class="form-group">
-            <label>Nama Pelapor (ID Pelajar)</label>
-            <input type="text" id="reporter" readonly style="background: #eee; cursor: not-allowed;">
+            <label>Nama Pelapor</label>
+            <input type="text" id="reporter" placeholder="Sila masukkan nama anda" required>
         </div>
 
         <button type="submit" id="submitBtn" class="btn-primary">Hantar Laporan & Gambar</button>
@@ -294,7 +294,8 @@
     function proceedToApp(userId) {
         document.getElementById('loginOverlay').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
-        document.getElementById('reporter').value = userId;
+        // Mengisi ID secara automatik sebagai cadangan, tetapi kini boleh diubah
+        document.getElementById('reporter').value = userId; 
     }
 
     // --- LOGIK BORANG ---
@@ -335,7 +336,7 @@
         const formData = {
             alat: document.getElementById('toolType').value,
             serial: document.getElementById('serialNo').value,
-            pendaftaran: document.getElementById('regNo').value, // DATA BARU
+            pendaftaran: document.getElementById('regNo').value,
             priority: document.getElementById('priority').value,
             masalah: document.getElementById('desc').value,
             pelapor: document.getElementById('reporter').value,
@@ -349,8 +350,8 @@
         })
         .then(() => {
             statusMsg.className = "status-msg success";
-            statusMsg.innerHTML = "✅ Laporan Berjaya Dihantar!";
             statusMsg.style.display = "block";
+            statusMsg.innerHTML = "✅ Laporan Berjaya Dihantar!";
             form.reset();
             document.getElementById('preview').style.display = "none";
             base64String = "";
