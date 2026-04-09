@@ -11,6 +11,7 @@
             --bg: #f5f6fa; 
             --text: #2c3e50;
             --danger: #e74c3c;
+            --success: #27ae60;
         }
 
         body { 
@@ -83,10 +84,11 @@
 
         .header-container {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             margin-bottom: 30px;
-            gap: 20px;
+            gap: 10px;
             border-bottom: 2px solid rgba(41, 128, 185, 0.1);
             padding-bottom: 20px;
         }
@@ -113,6 +115,18 @@
         .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(41,128,185,0.3); }
 
+        .btn-admin-sheet { 
+            background: var(--success); 
+            color: white; 
+            display: none; 
+            margin-bottom: 20px;
+            text-decoration: none;
+            text-align: center;
+            display: none; /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+        }
+
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); margin-top: 5px; font-size: 0.9rem; padding: 10px; }
 
         .btn-logout { 
@@ -125,7 +139,8 @@
         #statusMsg { text-align: center; margin-top: 20px; font-weight: bold; padding: 15px; border-radius: 12px; display: none; }
         .success { background: #d4edda; color: #155724; }
 
-        .link-text { color: var(--primary); cursor: pointer; text-decoration: underline; font-size: 0.9rem; }
+        .link-text { color: var(--primary); cursor: pointer; text-decoration: underline; font-size: 0.85rem; }
+        .auth-footer { margin-top: 15px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
     </style>
 </head>
 <body>
@@ -149,9 +164,12 @@
 
         <button class="btn-primary" onclick="checkLogin()">Masuk Sekarang</button>
         
-        <p id="signUpPrompt" style="margin-top:15px; font-size:0.9rem;">
-            Tiada akaun? <span class="link-text" onclick="toggleAuth('signup')">Daftar Sini</span>
-        </p>
+        <div class="auth-footer">
+            <p id="signUpPrompt" style="font-size:0.9rem; margin:0;">
+                Tiada akaun? <span class="link-text" onclick="toggleAuth('signup')">Daftar Sini</span>
+            </p>
+            <span class="link-text" onclick="forgotPassword()">Lupa Kata Laluan?</span>
+        </div>
         <p id="loginErr" style="color:red; font-size: 0.8rem; margin-top:10px; display:none;">ID atau Kata Laluan Salah!</p>
     </div>
 
@@ -171,9 +189,13 @@
 </div>
 
 <div class="container" id="mainApp">
+    <a id="adminSheetLink" href="https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_HERE/edit" target="_blank" class="btn-admin-sheet">
+        📊 Buka Rekod Aduan (Google Sheets)
+    </a>
+
     <div class="header-container">
         <img src="logo.png" alt="Logo PUO">
-        <h2>E-Aduan Kerosakan Alat Geomatik PUO</h2>
+        <h2 style="text-align: center; margin: 0;">E-Aduan Kerosakan Alat Geomatik PUO</h2>
     </div>
 
     <form id="ticketForm">
@@ -243,6 +265,9 @@
 <script>
     // --- KONFIGURASI ---
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxoace7fkEYJhqhdpRKixVzV_puFqXcyghqcI6QFgYd4HeAMmXUGK31IM8AgOtupX0tgw/exec';
+    // Gantikan link di bawah dengan link Google Sheet anda yang sebenar
+    const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1v5O1V5v_example_ID/edit"; 
+    
     let currentRole = 'user';
     const ADMIN_PASS = "admin123";
 
@@ -270,6 +295,30 @@
         toggleAuth('login');
     }
 
+    // Ciri Baru: Lupa Kata Laluan
+    function forgotPassword() {
+        const id = document.getElementById('idInput').value.trim().toUpperCase();
+        if (!id) {
+            alert("Sila masukkan ID anda terlebih dahulu di ruangan ID Pelajar/Username.");
+            return;
+        }
+
+        if (currentRole === 'admin') {
+            if (id === "ADMIN") {
+                alert("Pembayang Admin: Kata laluan adalah 'admin' diikuti dengan nombor '123'.");
+            } else {
+                alert("Username Admin tidak dikenali.");
+            }
+        } else {
+            const storedPass = localStorage.getItem('user_' + id);
+            if (storedPass) {
+                alert("Kata laluan untuk ID " + id + " adalah: " + storedPass);
+            } else {
+                alert("ID tidak ditemui. Sila daftar akaun baru.");
+            }
+        }
+    }
+
     function checkLogin() {
         const id = document.getElementById('idInput').value.trim().toUpperCase();
         const pass = document.getElementById('passInput').value;
@@ -295,7 +344,13 @@
         document.getElementById('loginOverlay').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
         
-        // DIBAIK PULIH: Ruangan Nama Pelapor dibiarkan kosong sepenuhnya
+        // Papar pautan Google Sheet jika Admin
+        if (userId === "ADMIN") {
+            const sheetBtn = document.getElementById('adminSheetLink');
+            sheetBtn.href = GOOGLE_SHEET_URL;
+            sheetBtn.style.display = "flex";
+        }
+
         document.getElementById('reporter').value = ""; 
     }
 
