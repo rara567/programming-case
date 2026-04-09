@@ -118,14 +118,19 @@
         .btn-admin-sheet { 
             background: var(--success); 
             color: white; 
-            display: none; 
             margin-bottom: 20px;
             text-decoration: none;
             text-align: center;
-            display: none; /* Hidden by default */
+            display: none; /* Disembunyikan secara default */
             align-items: center;
             justify-content: center;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: 0.3s;
         }
+        .btn-admin-sheet:hover { opacity: 0.9; transform: scale(1.02); }
 
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); margin-top: 5px; font-size: 0.9rem; padding: 10px; }
 
@@ -189,7 +194,7 @@
 </div>
 
 <div class="container" id="mainApp">
-    <a id="adminSheetLink" href="https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_HERE/edit" target="_blank" class="btn-admin-sheet">
+    <a id="adminSheetLink" href="https://docs.google.com/spreadsheets/d/1CsLSTWrcb94ERmzFPh54TPOzrwk8aODmeTHFzxcEDhY/edit?gid=0#gid=0" target="_blank" class="btn-admin-sheet">
         📊 Buka Rekod Aduan (Google Sheets)
     </a>
 
@@ -265,8 +270,7 @@
 <script>
     // --- KONFIGURASI ---
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxoace7fkEYJhqhdpRKixVzV_puFqXcyghqcI6QFgYd4HeAMmXUGK31IM8AgOtupX0tgw/exec';
-    // Gantikan link di bawah dengan link Google Sheet anda yang sebenar
-    const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1v5O1V5v_example_ID/edit"; 
+    const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1CsLSTWrcb94ERmzFPh54TPOzrwk8aODmeTHFzxcEDhY/edit?gid=0#gid=0"; 
     
     let currentRole = 'user';
     const ADMIN_PASS = "admin123";
@@ -295,7 +299,6 @@
         toggleAuth('login');
     }
 
-    // Ciri Baru: Lupa Kata Laluan
     function forgotPassword() {
         const id = document.getElementById('idInput').value.trim().toUpperCase();
         if (!id) {
@@ -314,7 +317,7 @@
             if (storedPass) {
                 alert("Kata laluan untuk ID " + id + " adalah: " + storedPass);
             } else {
-                alert("ID tidak ditemui. Sila daftar akaun baru.");
+                alert("ID tidak ditemui dalam sistem pendaftaran peranti ini.");
             }
         }
     }
@@ -344,11 +347,12 @@
         document.getElementById('loginOverlay').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
         
-        // Papar pautan Google Sheet jika Admin
+        // PAPAR BUTANG SHEET JIKA ADMIN LOG MASUK
         if (userId === "ADMIN") {
             const sheetBtn = document.getElementById('adminSheetLink');
-            sheetBtn.href = GOOGLE_SHEET_URL;
             sheetBtn.style.display = "flex";
+        } else {
+            document.getElementById('adminSheetLink').style.display = "none";
         }
 
         document.getElementById('reporter').value = ""; 
