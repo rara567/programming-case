@@ -73,7 +73,7 @@
 
         /* --- CONTAINER UTAMA --- */
         .container { 
-            max-width: 650px; 
+            max-width: 800px; /* Lebarkan sedikit untuk paparan jadual */
             margin: auto; 
             background: rgba(255, 255, 255, 0.95); 
             padding: 40px; 
@@ -115,13 +115,12 @@
         .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(41,128,185,0.3); }
 
-        .btn-admin-sheet { 
+        /* BUTTON BARU UNTUK ADMIN VIEW */
+        .btn-admin-view { 
             background: var(--success); 
             color: white; 
             margin-bottom: 20px;
-            text-decoration: none;
-            text-align: center;
-            display: none; /* Disembunyikan secara default */
+            display: none; 
             align-items: center;
             justify-content: center;
             padding: 16px;
@@ -129,8 +128,23 @@
             font-weight: 700;
             font-size: 1.1rem;
             transition: 0.3s;
+            cursor: pointer;
         }
-        .btn-admin-sheet:hover { opacity: 0.9; transform: scale(1.02); }
+
+        /* CONTAINER JADUAL */
+        #recordSection {
+            display: none;
+            margin-top: 30px;
+            border-top: 3px solid var(--success);
+            padding-top: 20px;
+        }
+
+        #recordSection iframe {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+        }
 
         .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); margin-top: 5px; font-size: 0.9rem; padding: 10px; }
 
@@ -194,13 +208,19 @@
 </div>
 
 <div class="container" id="mainApp">
-    <a id="adminSheetLink" href="https://docs.google.com/spreadsheets/d/1CsLSTWrcb94ERmzFPh54TPOzrwk8aODmeTHFzxcEDhY/edit?gid=0#gid=0" target="_blank" class="btn-admin-sheet">
-        📊 Buka Rekod Aduan (Google Sheets)
-    </a>
+    <div id="adminViewBtn" class="btn-admin-view" onclick="toggleRecords()">
+        📊 Papar / Tutup Rekod Aduan
+    </div>
 
     <div class="header-container">
         <img src="logo.png" alt="Logo PUO">
         <h2 style="text-align: center; margin: 0;">E-Aduan Kerosakan Alat Geomatik PUO</h2>
+    </div>
+
+    <div id="recordSection">
+        <h3 style="color: var(--success); text-align: center;">Pangkalan Data Rekod Aduan</h3>
+        <iframe src="https://docs.google.com/spreadsheets/d/1CsLSTWrcb94ERmzFPh54TPOzrwk8aODmeTHFzxcEDhY/edit?rm=minimal"></iframe>
+        <p style="font-size: 0.8rem; text-align: center; color: #666;">*Nota: Sila pastikan anda log masuk akaun Google yang mempunyai akses.</p>
     </div>
 
     <form id="ticketForm">
@@ -268,19 +288,14 @@
 </div>
 
 <script>
-    // --- KONFIGURASI ---
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxoace7fkEYJhqhdpRKixVzV_puFqXcyghqcI6QFgYd4HeAMmXUGK31IM8AgOtupX0tgw/exec';
-    const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/1CsLSTWrcb94ERmzFPh54TPOzrwk8aODmeTHFzxcEDhY/edit?gid=0#gid=0"; 
-    
     let currentRole = 'user';
     const ADMIN_PASS = "admin123";
 
-    // --- LOGIK AUTHENTICATION ---
     function setRole(role) {
         currentRole = role;
         document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
         if (event) event.target.classList.add('active');
-        
         document.getElementById('signUpPrompt').style.display = (role === 'admin') ? 'none' : 'block';
         document.getElementById('idInput').placeholder = (role === 'admin') ? "Username Admin" : "ID Pelajar (e.g: F1010)";
     }
@@ -301,24 +316,12 @@
 
     function forgotPassword() {
         const id = document.getElementById('idInput').value.trim().toUpperCase();
-        if (!id) {
-            alert("Sila masukkan ID anda terlebih dahulu di ruangan ID Pelajar/Username.");
-            return;
-        }
-
+        if (!id) { alert("Sila masukkan ID anda."); return; }
         if (currentRole === 'admin') {
-            if (id === "ADMIN") {
-                alert("Pembayang Admin: Kata laluan adalah 'admin' diikuti dengan nombor '123'.");
-            } else {
-                alert("Username Admin tidak dikenali.");
-            }
+            alert(id === "ADMIN" ? "Pembayang: admin + 123" : "Admin tidak dikenali.");
         } else {
             const storedPass = localStorage.getItem('user_' + id);
-            if (storedPass) {
-                alert("Kata laluan untuk ID " + id + " adalah: " + storedPass);
-            } else {
-                alert("ID tidak ditemui dalam sistem pendaftaran peranti ini.");
-            }
+            alert(storedPass ? "Kata laluan: " + storedPass : "ID tidak ditemui.");
         }
     }
 
@@ -328,18 +331,12 @@
         const err = document.getElementById('loginErr');
 
         if(currentRole === 'admin') {
-            if(id === "ADMIN" && pass === ADMIN_PASS) {
-                proceedToApp("ADMIN");
-            } else {
-                err.style.display = 'block';
-            }
+            if(id === "ADMIN" && pass === ADMIN_PASS) proceedToApp("ADMIN");
+            else err.style.display = 'block';
         } else {
             const storedPass = localStorage.getItem('user_' + id);
-            if(storedPass && storedPass === pass) {
-                proceedToApp(id);
-            } else {
-                err.style.display = 'block';
-            }
+            if(storedPass && storedPass === pass) proceedToApp(id);
+            else err.style.display = 'block';
         }
     }
 
@@ -347,18 +344,23 @@
         document.getElementById('loginOverlay').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
         
-        // PAPAR BUTANG SHEET JIKA ADMIN LOG MASUK
+        // Hanya Admin nampak butang Rekod
         if (userId === "ADMIN") {
-            const sheetBtn = document.getElementById('adminSheetLink');
-            sheetBtn.style.display = "flex";
-        } else {
-            document.getElementById('adminSheetLink').style.display = "none";
+            document.getElementById('adminViewBtn').style.display = "flex";
         }
-
-        document.getElementById('reporter').value = ""; 
     }
 
-    // --- LOGIK BORANG ---
+    // Fungsi untuk Papar/Tutup Iframe Rekod
+    function toggleRecords() {
+        const section = document.getElementById('recordSection');
+        if (section.style.display === "none" || section.style.display === "") {
+            section.style.display = "block";
+            section.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            section.style.display = "none";
+        }
+    }
+
     const form = document.getElementById('ticketForm');
     const btn = document.getElementById('submitBtn');
     const statusMsg = document.getElementById('statusMsg');
@@ -368,7 +370,6 @@
         const file = document.getElementById('fileInput').files[0];
         const reader = new FileReader();
         const preview = document.getElementById('preview');
-
         reader.onload = function(e) {
             const img = new Image();
             img.src = e.target.result;
@@ -385,14 +386,13 @@
                 preview.style.display = "block";
             }
         };
-        if (file) { reader.readAsDataURL(file); }
+        if (file) reader.readAsDataURL(file);
     }
 
     form.addEventListener('submit', e => {
         e.preventDefault();
         btn.disabled = true;
         btn.innerHTML = "Sedang Menghantar...";
-
         const formData = {
             alat: document.getElementById('toolType').value,
             serial: document.getElementById('serialNo').value,
@@ -402,12 +402,7 @@
             pelapor: document.getElementById('reporter').value,
             gambar: base64String 
         };
-
-        fetch(scriptURL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify(formData)
-        })
+        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(formData) })
         .then(() => {
             statusMsg.className = "status-msg success";
             statusMsg.style.display = "block";
